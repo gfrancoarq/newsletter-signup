@@ -46,10 +46,16 @@ app.post("/", (req, res) => {
   const url = "https://us17.api.mailchimp.com/3.0/lists/879ac69af2";
   const options = {
     method: "POST",
-    auth: "gfrancoarq:6085e7d74ad6a5e6b5926d0c9f8503d9-us17",
+    auth: "gfrancoarq:g6085e7d74ad6a5e6b5926d0c9f8503d9-us17",
   };
 
   const request = https.request(url, options, function (response) {
+    if (response.statusCode === 200) {
+      res.sendFile(__dirname + "/success.html");
+    } else {
+      res.sendFile(__dirname + "/failure.html");
+    }
+
     response.on("data", function (data) {
       console.log(JSON.parse(data));
     });
@@ -59,8 +65,13 @@ app.post("/", (req, res) => {
   request.end();
 });
 
+app.post("/failure", function (req, res) {
+  res.redirect("/");
+});
+
 // "#Boilerplate app.js"
-app.listen(3000, function () {
+// 6- Junto al puerto 3000, se pone un puerto dinámico, para poder hacer el deploy con Heroku. Esto ahora corre localmente, y tambien en Heroku. El objeto process está definido por Heroku.
+app.listen(process.env.PORT || 3000, function () {
   console.log("listening on port 3000");
 });
 
